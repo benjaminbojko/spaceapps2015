@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 [RequireComponent(typeof(TextAnimation))]
 public class MainController : MonoBehaviour {
 
+	public string jsonURL;
 	public string audioURL;
 	AudioSource audio;
 
@@ -39,7 +40,7 @@ public class MainController : MonoBehaviour {
 
 	void LoadNextAnimation ()
 	{
-		StartCoroutine (loader.Load ("http://localhost:8000/sample-segments.json", LoadSuccess, LoadError));
+		StartCoroutine (loader.Load (jsonURL, LoadSuccess, LoadError));
 	}
 
 	void LoadSuccess (SegmentContainer container)
