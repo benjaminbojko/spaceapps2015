@@ -14,6 +14,7 @@ public class MainController : MonoBehaviour {
 
 		textAnimation = GetComponent<TextAnimation> ();
 		textAnimation.animationCompleted += AnimationCompleted;
+		textAnimation.transform = transform;
 
 		LoadNextAnimation ();
 	}

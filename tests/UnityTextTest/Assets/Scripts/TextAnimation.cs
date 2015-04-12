@@ -32,7 +32,7 @@ public class TextAnimation : MonoBehaviour {
 			textMesh.text = segment.Text;
 			textMesh.transform.parent = transform;
 
-			textMesh.transform.localPosition = new Vector3(currentPos.x, currentPos.y, currentPos.z);
+			textMesh.transform.localPosition = new Vector3(currentPos.x + 287, currentPos.y, currentPos.z);
 			TextUtils.WrapTextMesh(textMesh, maxWidth);
 			textObjects[i] = textMesh.gameObject;
 
@@ -58,7 +58,6 @@ public class TextAnimation : MonoBehaviour {
 			
 			Vector3 targetPosition = textObject.transform.localPosition;
 			targetPosition.y += scrollSpeed * Time.fixedDeltaTime;
-			
 			textObject.transform.localPosition = targetPosition;
 
 			if (i == segmentContainer.Segments.Count - 1 && targetPosition.y - renderer.bounds.size.y > bounds.yMin) {

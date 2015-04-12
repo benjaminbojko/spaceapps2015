@@ -2,29 +2,27 @@
 using System.Collections;
 
 public class TextAnimation : MonoBehaviour {
-
+	
 	public delegate void AnimationCompletedHandler(TextAnimation animation);
-
+	
 	public event AnimationCompletedHandler animationCompleted;
 	
 	public GameObject largeTextPrefab;
 	public Rect bounds;
 	public float scrollSpeed = 1.0f;
-
-//	int currentSegmentIndex = 0;
+	
+	//	int currentSegmentIndex = 0;
 	GameObject[] textObjects;
 	SegmentContainer segmentContainer;
-
+	
 	public void StartAnimation (SegmentContainer segmentContainer)
 	{
 		this.segmentContainer = segmentContainer;
-//		currentSegmentIndex = 0;
-
+		
 		Vector3 currentPos = new Vector3 (bounds.xMin, bounds.y - bounds.height, 0.0f);
-//		Vector3 currentPos = new Vector3 (bounds.xMin, bounds.y, 0.0f);
 		float maxWidth = bounds.width;
 		textObjects = new GameObject[segmentContainer.Segments.Count];
-
+		
 		for (int i = 0; i < segmentContainer.Segments.Count; i++) {
 			Segment segment = segmentContainer.Segments[i];
 			GameObject gameObject = Instantiate(largeTextPrefab);
@@ -32,56 +30,53 @@ public class TextAnimation : MonoBehaviour {
 			TextMesh textMesh = gameObject.GetComponent<TextMesh>();
 			textMesh.text = segment.Text;
 			textMesh.transform.parent = transform;
-
-			textMesh.gameObject.transform.position = new Vector3(currentPos.x, currentPos.y, currentPos.z);
+			
+			textMesh.transform.localPosition = new Vector3(currentPos.x, currentPos.y, currentPos.z);
 			TextUtils.WrapTextMesh(textMesh, maxWidth);
 			textObjects[i] = textMesh.gameObject;
-
+			
 			Renderer renderer = textMesh.GetComponent<Renderer>();
-//			Color color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0.0f);
-//			renderer.material.color = color;
-
+			
 			currentPos.y -= renderer.bounds.size.y;
 		}
-
-//		StartCoroutine (AnimateInNextSegment ());
 	}
-
+	
 	void FixedUpdate()
 	{
 		if (segmentContainer == null || segmentContainer.Segments == null || segmentContainer.Segments.Count == 0) {
 			return;
 		}
-
+		
 		for (int i = 0; i < segmentContainer.Segments.Count; i++) {
 			GameObject textObject = textObjects[i];
 			Renderer renderer = textObject.GetComponent<Renderer> ();
 			
-			Vector3 targetPosition = textObject.transform.position;
+			Vector3 targetPosition = textObject.transform.localPosition;
+			targetPosition.x = bounds.xMin;
 			targetPosition.y += scrollSpeed * Time.fixedDeltaTime;
+			textObject.transform.localPosition = targetPosition;
+			textObject.transform.eulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
 			
-			textObject.transform.position = targetPosition;
-
 			if (i == segmentContainer.Segments.Count - 1 && targetPosition.y - renderer.bounds.size.y > bounds.yMin) {
 				FinishAnimation();
 			}
 		}
 	}
-
+	
 	void FinishAnimation()
 	{
 		Debug.Log("animation completed");
-
+		
 		foreach (GameObject textObject in textObjects) {
 			Destroy (textObject);
 		}
-
+		
 		textObjects = null;
 		segmentContainer = null;
-
+		
 		animationCompleted(this);
 	}
-
+	
 	/// <summary>
 	/// Animates in the next segments. Calls itself recursively when done or
 	/// triggers AnimationCompleted() when all segments are off screen.

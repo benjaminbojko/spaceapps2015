@@ -13,6 +13,10 @@ public class BackgroundSound : MonoBehaviour {
 	IEnumerator Start () {
 		WWW www = new WWW (url);
 
+		if(!source.isPlaying && source.clip.isReadyToPlay) {
+			source.Play();
+		}
+
 		yield return www;
 
 		source = GetComponent<AudioSource> ();
@@ -24,11 +28,10 @@ public class BackgroundSound : MonoBehaviour {
 		if (source == null || source.clip == null) {
 			return;
 		}
-		Debug.Log (source.clip);
-		Debug.Log (source.clip.isReadyToPlay);
-		Debug.Log (source.clip.loadState);
-		if(!source.isPlaying && source.clip.isReadyToPlay)
+
+		if(!source.isPlaying && source.clip.isReadyToPlay) {
 			source.Play();
+		}
 	}
 }
 

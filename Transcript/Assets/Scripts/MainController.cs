@@ -4,7 +4,10 @@ using Newtonsoft.Json;
 
 [RequireComponent(typeof(TextAnimation))]
 public class MainController : MonoBehaviour {
-	
+
+	public string audioURL;
+	AudioSource audio;
+
 	JSONLoader<SegmentContainer> loader;
 	TextAnimation textAnimation;
 
@@ -12,9 +15,25 @@ public class MainController : MonoBehaviour {
 	{
 		loader = new JSONLoader<SegmentContainer> ();
 
+		audio = GetComponent<AudioSource> ();
 		textAnimation = GetComponent<TextAnimation> ();
 		textAnimation.animationCompleted += AnimationCompleted;
 
+		StartCoroutine (LoadAudioAndAnimate ());
+	}
+	
+	IEnumerator LoadAudioAndAnimate ()
+	{
+		
+		audio.Stop ();
+		
+		WWW www = new WWW (audioURL);
+		
+		yield return www;
+		
+		audio.clip = www.audioClip;
+		audio.Play();
+		
 		LoadNextAnimation ();
 	}
 
@@ -37,7 +56,7 @@ public class MainController : MonoBehaviour {
 
 	void AnimationCompleted (TextAnimation animation)
 	{
-		LoadNextAnimation ();
+		LoadAudioAndAnimate ();
 	}
 
 }
