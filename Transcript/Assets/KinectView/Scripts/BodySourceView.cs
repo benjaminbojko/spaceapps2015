@@ -131,9 +131,12 @@ public class BodySourceView : MonoBehaviour
             {
                 GameObject jointObj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
 
-                jointObj.transform.localScale = new Vector3(30.0f, 15.0f, 30.0f);
+                jointObj.transform.localScale = new Vector3(50.0f, 25.0f, 50.0f);
                 jointObj.name = jt.ToString();
                 jointObj.transform.parent = body.transform;
+
+                Renderer rend = jointObj.GetComponent<Renderer>();
+                rend.enabled = false;
 
                 // add our colliders to the cloth gameobject as defined above
                 cap[i] = jointObj.GetComponent<CapsuleCollider>();
@@ -182,6 +185,6 @@ public class BodySourceView : MonoBehaviour
 
     private static Vector3 GetVector3FromJoint(Kinect.Joint joint)
     {
-        return new Vector3(joint.Position.X * 10, joint.Position.Y * 10, joint.Position.Z * -10);
+        return new Vector3(joint.Position.X * -10, joint.Position.Y * 10, joint.Position.Z * -10);
     }
 }
